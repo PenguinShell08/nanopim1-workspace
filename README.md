@@ -20,6 +20,20 @@ Releases: <https://github.com/PenguinShell08/nanopim1-armbian/releases>
 ## Kablite lähtekood
 Eraldi repo: <https://github.com/PenguinShell08/nanopim1-forensic>
 
+## Teadaolevad probleemid
+
+### Parandatud (uues tõmmel)
+- `machine-id` oli sidekriipsudega UUID-vormingus → journald ei salvestanud püsivalt. Nüüd 32-tähemärgiline hex.
+- Puudus `default.target` → süsteem käivitus emergency režiimis. Lisatud.
+- Puudusid forensilised kablid → lisatud journald püsivus, journal-mirror, shutdown-snapshot, auto-diag (tty1).
+
+### Diagnoosimata (ootab reaalset riistvara)
+- **Taaskäivitustsükkel (reboot-loop):** tõmmbel on vaid diagnoosivahend, põhjuse pole veel leitud.
+- Korda probleemi NanoPi M1-l ja saada tagasi logid:
+  - `/root/loop-diag.txt`
+  - `/var/log/journal-live.txt`
+  - `/var/log/shutdown-snapshot.txt`
+
 ---
 
 ## 中文版
@@ -41,3 +55,17 @@ Releases：<https://github.com/PenguinShell08/nanopim1-armbian/releases>
 
 ### 钩子源码
 单独仓库：<https://github.com/PenguinShell08/nanopim1-forensic>
+
+### 已知问题
+
+#### 已修复（新镜像已解决）
+- `machine-id` 为带连字符的 UUID 格式 → journald 不持久化。已规范化为 32 位 hex。
+- 缺少 `default.target` → 启动进 emergency 模式。已补回。
+- 无取证钩子 → 已加入 journald 持久化、journal-mirror、shutdown-snapshot、auto-diag（tty1）。
+
+#### 未诊断（待真实硬件验证）
+- **重启循环（reboot-loop）：** 当前镜像仅为诊断工具，根因尚未定位。
+- 请在 NanoPi M1 上复现并回传日志：
+  - `/root/loop-diag.txt`
+  - `/var/log/journal-live.txt`
+  - `/var/log/shutdown-snapshot.txt`
