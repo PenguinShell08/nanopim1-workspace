@@ -1,0 +1,11 @@
+[Unit]
+Description=Expand root partition and filesystem to fill the boot medium
+After=local-fs.target
+ConditionPathExists=!/var/lib/armbian-resize-root.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/armbian-resize-root.sh
+
+[Install]
+WantedBy=multi-user.target

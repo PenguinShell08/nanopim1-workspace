@@ -1,0 +1,21 @@
+[Unit]
+Description=Emergency root shell on tty2 (safety net, disable by removing symlink)
+After=multi-user.target
+ConditionPathExists=/dev/tty2
+
+[Service]
+Type=simple
+# NOT a login shell (-l): a login shell sources /etc/profile -> profile.d,
+# re-triggering bsp first-login automation unattended. -i keeps it interactive
+# (reads ~/.bashrc only) without running system profile scripts.
+ExecStart=/bin/bash -i
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty2
+TTYReset=yes
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

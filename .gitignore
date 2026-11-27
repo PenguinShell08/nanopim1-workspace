@@ -1,0 +1,16 @@
+# Large disk images (distributed via GitHub Release attachments, not git)
+*.img
+*.img.xz
+
+# Secrets / local credentials (never commit)
+id_build
+id_build.pub
+kh_build
+*.key
+*.pem
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db

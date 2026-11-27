@@ -1,0 +1,18 @@
+[Unit]
+Description=Direct root shell on ttyS0 (no getty/login/PAM)
+After=multi-user.target
+ConditionPathExists=/dev/ttyS0
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -li
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS0
+TTYReset=yes
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

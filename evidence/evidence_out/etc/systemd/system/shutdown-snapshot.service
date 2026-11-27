@@ -1,0 +1,11 @@
+[Unit]
+Description=Snapshot full boot log at shutdown instant
+DefaultDependencies=no
+After=systemd-journald.socket
+Before=shutdown.target
+WantedBy=sysinit.target
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+ExecStop=/bin/sh -c '{ echo "--- $(date)"; echo "---MOUNT---"; mount | grep -E "mmcblk|/var" ; echo "---JOURNAL-DIR---"; ls -la /var/log/journal/ 2>&1; echo "---JOURNAL-TAIL---"; /usr/bin/journalctl -b --no-pager -n 120 2>&1; echo "---DMESG-TAIL---"; /bin/dmesg 2>&1 | tail -60; } > /var/log/shutdown-snapshot.txt 2>&1'
