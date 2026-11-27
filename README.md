@@ -1,4 +1,4 @@
-# nanopim1-workspace
+# nanopim1-armbian
 
 Armbiani kompileerimise töölogi NanoPi M1 jaoks, teostatud kohalikus VBOX Ubuntu VM-is.
 
@@ -15,7 +15,7 @@ kinnijäämiseks.
 - `build-info/`  väljundfailide sha256 kontrollsumma ja kompileerimisinfo
 
 ## Tõmbelallaadimine
-Releases: <https://github.com/PenguinShell08/nanopim1-workspace/releases>
+Releases: <https://github.com/PenguinShell08/nanopim1-armbian/releases>
 
 ## Kablite lähtekood
 Eraldi repo: <https://github.com/PenguinShell08/nanopim1-forensic>
