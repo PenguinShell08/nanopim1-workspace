@@ -11,6 +11,22 @@ BOARD=$3
 log(){ echo "[customize-image] $*"; }
 
 # ------------------------------------------------------------------
+# 0) build-info — record who built this image and when, so it is
+#    discoverable inside the running system (/etc/build-info) and on
+#    the tty1 boot banner. Override the builder via BUILDER_GITHUB env.
+# ------------------------------------------------------------------
+BUILDER_GITHUB="${BUILDER_GITHUB:-PenguinShell08}"
+BUILD_TIME_STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+cat > /etc/build-info <<EOF
+BUILDER_GITHUB=${BUILDER_GITHUB}
+BUILD_TIME=${BUILD_TIME_STAMP}
+BOARD=${BOARD}
+RELEASE=${RELEASE}
+EOF
+chmod 644 /etc/build-info
+log "build-info: builder=${BUILDER_GITHUB} time=${BUILD_TIME_STAMP}"
+
+# ------------------------------------------------------------------
 # 1) journald: force persistent storage  +  ensure journal dir exists
 # ------------------------------------------------------------------
 install -d -m 755 /etc/systemd/journald.conf.d
@@ -87,6 +103,7 @@ clear 2>/dev/null || true
 echo "============================================================"
 echo " [auto-diag]  boot  $(date -Is 2>/dev/null || date)"
 echo " machine-id : $(cat /etc/machine-id 2>/dev/null)"
+echo " built by   : $(grep -m1 '^BUILDER_GITHUB=' /etc/build-info 2>/dev/null | cut -d= -f2)"
 echo " journal files on card : $(find /var/log/journal -type f 2>/dev/null | wc -l)"
 echo "============================================================"
 echo

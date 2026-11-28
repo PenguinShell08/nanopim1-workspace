@@ -19,16 +19,16 @@ Root partition type: ext4
 CPU configuration: 480000 - 1400000 with ondemand
 ---------------------------------------------------------------------------
 Verify GPG signature:
-gpg --verify Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img.xz.asc
+gpg --verify Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img.xz.asc
 
 Verify image file integrity:
-sha256sum --check Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img.xz.sha
+sha256sum --check Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img.xz.sha
 
 Prepare SD card (four methods):
-xzcat Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img.xz | pv | dd of=/dev/mmcblkX bs=1M
-dd if=Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img of=/dev/mmcblkX bs=1M
-balena-etcher Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img.xz -d /dev/mmcblkX
-balena-etcher Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_minimal.img -d /dev/mmcblkX
+xzcat Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img.xz | pv | dd of=/dev/mmcblkX bs=1M
+dd if=Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img of=/dev/mmcblkX bs=1M
+balena-etcher Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img.xz -d /dev/mmcblkX
+balena-etcher Armbian-unofficial_26.11.0-trunk_Nanopim1_trixie_current_6.18.65_20261128-0349_minimal.img -d /dev/mmcblkX
 ---------------------------------------------------------------------------
 GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
