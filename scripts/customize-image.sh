@@ -44,10 +44,14 @@ Description=Mirror journal to plain text file
 DefaultDependencies=no
 After=systemd-journald.service
 Before=shutdown.target
-WantedBy=sysinit.target
+
 [Service]
 Type=simple
-ExecStart=/bin/sh -c 'exec /usr/bin/journalctl -f -n all >> /var/log/journal-live.txt 2>&1'
+# /root is on the SD card; /var/log is zram (lost on a hard power loss).
+ExecStart=/bin/sh -c 'exec /usr/bin/journalctl -f -n all >> /root/journal-live.txt 2>&1'
+
+[Install]
+WantedBy=sysinit.target
 EOF
 
 # ------------------------------------------------------------------
@@ -60,12 +64,15 @@ Description=Snapshot full boot log at shutdown instant
 DefaultDependencies=no
 After=systemd-journald.socket
 Before=shutdown.target
-WantedBy=sysinit.target
+
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/true
 ExecStop=/bin/sh -c '{ echo "--- $(date)"; echo "---MOUNT---"; mount | grep -E "mmcblk|/var" ; echo "---JOURNAL-DIR---"; ls -la /var/log/journal/ 2>&1; echo "---JOURNAL-TAIL---"; /usr/bin/journalctl -b --no-pager -n 120 2>&1; echo "---DMESG-TAIL---"; /bin/dmesg 2>&1 | tail -60; } > /var/log/shutdown-snapshot.txt 2>&1'
+
+[Install]
+WantedBy=sysinit.target
 EOF
 
 # ------------------------------------------------------------------
@@ -91,9 +98,9 @@ if [ -r /var/log/shutdown-snapshot.txt ]; then
   cat /var/log/shutdown-snapshot.txt
 fi
 echo
-if [ -r /var/log/journal-live.txt ]; then
+if [ -r /root/journal-live.txt ]; then
   echo "=== [auto-diag] live-mirror: reboot trigger lines ==="
-  grep -iE "reboot|shutdown|panic|oops|watchdog|hwmon|thermal|voltage|regulator|mmc|ext4|under-voltage|critical" /var/log/journal-live.txt 2>/dev/null | tail -20
+  grep -iE "reboot|shutdown|panic|oops|watchdog|hwmon|thermal|voltage|regulator|mmc|ext4|under-voltage|critical" /root/journal-live.txt 2>/dev/null | tail -20
 fi
 echo
 echo "=== [auto-diag] appending full boot log to /root/loop-diag.txt ==="
@@ -106,7 +113,10 @@ chmod 755 /usr/local/sbin/auto-diag.sh
 cat > /etc/systemd/system/auto-diag.service <<'EOF'
 [Unit]
 Description=On-screen auto diagnostic (reboot-loop forensics)
-After=systemd-journald.service local-fs.target
+# Run AFTER multi-user.target so the 30s tty1 photo window does NOT block
+# login/SSH availability (previously this delayed multi-user by ~31s).
+After=multi-user.target systemd-journald.service local-fs.target
+Before=shutdown.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes

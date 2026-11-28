@@ -3,7 +3,11 @@ Description=Mirror journal to plain text file
 DefaultDependencies=no
 After=systemd-journald.service
 Before=shutdown.target
-WantedBy=sysinit.target
+
 [Service]
 Type=simple
-ExecStart=/bin/sh -c 'exec /usr/bin/journalctl -f -n all >> /var/log/journal-live.txt 2>&1'
+# /root is on the SD card; /var/log is zram (lost on a hard power loss).
+ExecStart=/bin/sh -c 'exec /usr/bin/journalctl -f -n all >> /root/journal-live.txt 2>&1'
+
+[Install]
+WantedBy=sysinit.target
