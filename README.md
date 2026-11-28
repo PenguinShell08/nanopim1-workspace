@@ -34,6 +34,27 @@ Eraldi repo: <https://github.com/PenguinShell08/nanopim1-forensic>
   - `/var/log/journal-live.txt`
   - `/var/log/shutdown-snapshot.txt`
 
+### Võrgu seadistamine esimesel käivitusel
+
+- Minimal-tõmmel on `/etc/systemd/network/` all vaid `00-armbian.network.readme` — **ühtegi tegelikku `.network` faili ei ole**; `NetworkManager` ega `ifupdown` pole paigaldatud.
+- Liidet nimetatakse käivitamisel ümber `eth0` → `end0` (systemd ennustatav nimekus), seega isegi olemasolev konfiguratsioon ei jõuaks rakendatud.
+- Tulemus: füüsiline link toimib (100 Mbps täisdupleks), kuid `end0` ei saa IPv4 aadressi; `ip addr` näitab ainult IPv6 link-local-aadressi.
+- **Lahendus** (üks kord, jääb pärast taaskäivitust alles):
+
+```sh
+cat > /etc/systemd/network/10-end0.network <<'EOF'
+[Match]
+Name=end0
+
+[Network]
+DHCP=yes
+EOF
+
+systemctl enable --now systemd-networkd
+```
+
+- Kui ühendad Windowsi ICS-i kaudu, saab plaat aadressi `192.168.137.x`. **Sulgevärav `192.168.137.1` ei vasta pingile — see on normaalse** (Windowsi Public-tülfirefüürib vaikimisi sissetuleva ICMP Echo päringu, mis ei mõjuta NAT-edastamist ega DNS-i). Kontrolli välisvõrgu `ping 223.5.5.5` ja `curl` käsuga.
+
 ---
 
 ## 中文版
@@ -69,3 +90,23 @@ Releases：<https://github.com/PenguinShell08/nanopim1-armbian/releases>
   - `/root/loop-diag.txt`
   - `/var/log/journal-live.txt`
   - `/var/log/shutdown-snapshot.txt`
+
+#### 首次启动无网络（需手动配置一次）
+- minimal 镜像的 `/etc/systemd/network/` 下只有 `00-armbian.network.readme` 说明文件，**没有任何 `.network` 配置**；`NetworkManager` 和 `ifupdown` 也都未安装。
+- 接口在启动时被从 `eth0` 重命名为 `end0`（systemd 可预测命名），所以即使有配置也不会命中。
+- 现象：物理链路正常（100M 全双工），但 `end0` 拿不到 IPv4，`ip addr` 只有 IPv6 link-local。
+- **修复**（一次即可，重启后保留）：
+
+```sh
+cat > /etc/systemd/network/10-end0.network <<'EOF'
+[Match]
+Name=end0
+
+[Network]
+DHCP=yes
+EOF
+
+systemctl enable --now systemd-networkd
+```
+
+- 接 Windows ICS 时板子会拿到 `192.168.137.x`；**网关 `192.168.137.1` 不回 ping 属正常**（Windows Public 防火墙默认阻止入站 ICMP Echo，不影响 NAT 转发和 DNS），用 `ping 223.5.5.5` 和 `curl` 验证外网即可。
