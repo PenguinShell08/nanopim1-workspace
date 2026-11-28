@@ -5,7 +5,7 @@ Vendor:         Armbian-unofficial
 Revision:       26.11.0-trunk
 Board:          Nanopim1
 Kernel:         Linux 6.18.65 (current)
-Build date:     27.11.2026
+Build date:     28.11.2026
 Sources:        https://github.com/armbian/build.git
 Sources rev:    2604999
 Authors:        https://www.armbian.com/authors
